@@ -1,0 +1,73 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String  @id @default(uuid())
+  email     String  @unique
+  name      String?
+  password  String
+  role      Role    @default(USER)
+  carts     Cart[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+enum Role {
+  USER
+  LIBRARIAN
+  ADMIN
+}
+
+model Community {
+  id          String      @id @default(uuid())
+  name        String      @unique
+  description String?
+  collections Collection[]
+}
+
+model Collection {
+  id          String    @id @default(uuid())
+  name        String
+  community   Community @relation(fields: [communityId], references: [id])
+  communityId String
+  items       Item[]
+}
+
+model Item {
+  id          String    @id @default(uuid())
+  title       String
+  description String?
+  collection  Collection @relation(fields: [collectionId], references: [id])
+  collectionId String
+  files       File[]
+  carts       Cart[]
+}
+
+model File {
+  id        String  @id @default(uuid())
+  url       String
+  type      String  // Can be 'image', 'pdf', etc.
+  item      Item    @relation(fields: [itemId], references: [id])
+  itemId    String
+}
+
+model Cart {
+  id        String  @id @default(uuid())
+  user      User    @relation(fields: [userId], references: [id])
+  userId    String
+  item      Item    @relation(fields: [itemId], references: [id])
+  itemId    String
+  createdAt DateTime @default(now())
+}
