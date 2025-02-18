@@ -20,6 +20,7 @@ model User {
   password  String
   role      Role    @default(USER)
   carts     Cart[]
+  communities Community[]
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
@@ -31,10 +32,18 @@ enum Role {
 }
 
 model Community {
-  id          String      @id @default(uuid())
-  name        String      @unique
-  description String?
-  collections Collection[]
+  id        String  @id @default(uuid())
+  name      String  @unique
+  introductoryText String?
+  shortDescription String?
+  copyrightText String?
+  news String?
+  logoUrl String?
+  collections Collection[] 
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  createdBy User    @relation(fields: [createdById], references: [id], onDelete: Cascade)
+  createdById String
 }
 
 model Collection {
