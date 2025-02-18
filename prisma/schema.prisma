@@ -22,6 +22,7 @@ model User {
   carts       Cart[]
   communities Community[]
   collections Collection[]
+  items       Item[]
   createdAt   DateTime     @default(now())
   updatedAt   DateTime     @updatedAt
 }
@@ -69,19 +70,39 @@ model Collection {
 }
 
 model Item {
-  id           String     @id @default(uuid())
-  title        String
-  description  String?
-  collection   Collection @relation(fields: [collectionId], references: [id])
-  collectionId String
-  files        File[]
-  carts        Cart[]
+  id               String     @id @default(uuid())
+  title            String
+  authors          String[]
+  otherTitles      String[]
+  dateOfIssue      DateTime
+  publisher        String?
+  citation         String?
+  seriesReports    Json? // Stores array of objects [{ series, reportNumber }]
+  identifiers      Json? // Stores array of objects [{ type, identifier }]
+  types            String[]
+  language         String?
+  subjectKeywords  String?
+  abstract         String?
+  sponsors         String?
+  description      String?
+  licenseConfirmed Boolean    @default(false)
+  thumbnail        String?
+  collectionId     String
+  collection       Collection @relation(fields: [collectionId], references: [id], onDelete: Cascade)
+  files            File[]
+  carts            Cart[]
+
+  createdBy   User     @relation(fields: [createdById], references: [id], onDelete: Cascade)
+  createdById String
+  updatedAt   DateTime @updatedAt
+  updatedById String?
 }
 
 model File {
   id     String @id @default(uuid())
   url    String
-  type   String // Can be 'image', 'pdf', etc.
+  public_id   String
+  type   String
   item   Item   @relation(fields: [itemId], references: [id])
   itemId String
 }
