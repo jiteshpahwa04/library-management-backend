@@ -2,7 +2,7 @@ const communityService = require('../services/communityService');
 
 async function createCommunity(req, res) {
   try {
-    const { name, introductoryText, shortDescription, copyrightText, news } = req.body;
+    const { name, introductoryText, shortDescription, copyrightText, news, parentCommunity } = req.body;
     const { logo } = req.files;
 
     if (!logo) {
@@ -17,7 +17,7 @@ async function createCommunity(req, res) {
       return res.status(401).json({ message: 'Unauthorized' });
     }
 
-    const community = await communityService.createCommunity(req.user.userId, name, shortDescription, introductoryText, copyrightText, news, logo);
+    const community = await communityService.createCommunity(req.user.userId, name, shortDescription, introductoryText, copyrightText, news, parentCommunity, logo);
     res.status(201).json({ message: 'Community created successfully', community });
   } catch (error) {
     res.status(400).json({ message: error.message });

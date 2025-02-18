@@ -39,6 +39,7 @@ model Community {
   copyrightText String?
   news String?
   logoUrl String?
+  parentCommunity String?
   collections Collection[] 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
