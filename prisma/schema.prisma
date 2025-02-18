@@ -14,15 +14,16 @@ datasource db {
 }
 
 model User {
-  id        String  @id @default(uuid())
-  email     String  @unique
-  name      String?
-  password  String
-  role      Role    @default(USER)
-  carts     Cart[]
+  id          String       @id @default(uuid())
+  email       String       @unique
+  name        String?
+  password    String
+  role        Role         @default(USER)
+  carts       Cart[]
   communities Community[]
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  collections Collection[]
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
 }
 
 enum Role {
@@ -32,52 +33,64 @@ enum Role {
 }
 
 model Community {
-  id        String  @id @default(uuid())
-  name      String  @unique
+  id               String       @id @default(uuid())
+  name             String       @unique
   introductoryText String?
   shortDescription String?
-  copyrightText String?
-  news String?
-  logoUrl String?
-  parentCommunity String?
-  collections Collection[] 
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  createdBy User    @relation(fields: [createdById], references: [id], onDelete: Cascade)
-  createdById String
+  copyrightText    String?
+  news             String?
+  logoUrl          String?
+  parentCommunity  String?
+  collections      Collection[]
+  createdAt        DateTime     @default(now())
+  updatedAt        DateTime     @updatedAt
+  createdBy        User         @relation(fields: [createdById], references: [id], onDelete: Cascade)
+  createdById      String
+  updatedById      String?
 }
 
 model Collection {
-  id          String    @id @default(uuid())
-  name        String
-  community   Community @relation(fields: [communityId], references: [id])
-  communityId String
-  items       Item[]
+  id               String    @id @default(uuid())
+  name             String
+  introductoryText String?
+  shortDescription String?
+  copyrightText    String?
+  news             String?
+  license          String?
+  logoUrl          String?
+  communityId      String
+  community        Community @relation(fields: [communityId], references: [id], onDelete: Cascade)
+  items            Item[]
+  createdAt        DateTime  @default(now())
+  createdBy        User      @relation(fields: [createdById], references: [id], onDelete: Cascade)
+  createdById      String
+  updatedAt        DateTime  @updatedAt
+  updatedById      String?
 }
 
 model Item {
-  id          String    @id @default(uuid())
-  title       String
-  description String?
-  collection  Collection @relation(fields: [collectionId], references: [id])
+  id           String     @id @default(uuid())
+  title        String
+  description  String?
+  collection   Collection @relation(fields: [collectionId], references: [id])
   collectionId String
-  files       File[]
-  carts       Cart[]
+  files        File[]
+  carts        Cart[]
 }
 
 model File {
-  id        String  @id @default(uuid())
-  url       String
-  type      String  // Can be 'image', 'pdf', etc.
-  item      Item    @relation(fields: [itemId], references: [id])
-  itemId    String
+  id     String @id @default(uuid())
+  url    String
+  type   String // Can be 'image', 'pdf', etc.
+  item   Item   @relation(fields: [itemId], references: [id])
+  itemId String
 }
 
 model Cart {
-  id        String  @id @default(uuid())
-  user      User    @relation(fields: [userId], references: [id])
+  id        String   @id @default(uuid())
+  user      User     @relation(fields: [userId], references: [id])
   userId    String
-  item      Item    @relation(fields: [itemId], references: [id])
+  item      Item     @relation(fields: [itemId], references: [id])
   itemId    String
   createdAt DateTime @default(now())
 }

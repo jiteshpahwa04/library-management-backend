@@ -1,5 +1,4 @@
 const { PrismaClient } = require('@prisma/client');
-const cloudinary = require('../config/cloudinaryConfig');
 const { uploadImageToCloudinary } = require('../utils/imageUploader');
 
 const prisma = new PrismaClient();
@@ -21,13 +20,14 @@ async function createCommunity(userId, name, shortDescription, introductoryText,
             }
         }
 
-        // Upload image to Cloudinary
-        const cloudinaryResponse = await uploadImageToCloudinary(
-            logo,
-            process.env.FOLDER_NAME
-        )
+        let cloudinaryResponse = null;
+        if(logo!=null){
+            cloudinaryResponse = await uploadImageToCloudinary(
+                logo,
+                process.env.FOLDER_NAME
+            )
+        }
 
-        // Save the community with the Cloudinary image URL
         return prisma.community.create({
             data: {
                 name,
@@ -37,7 +37,7 @@ async function createCommunity(userId, name, shortDescription, introductoryText,
                 news,
                 parentCommunity,
                 createdById: userId,
-                logoUrl: cloudinaryResponse.secure_url,
+                logoUrl: cloudinaryResponse!=null ? cloudinaryResponse.secure_url : null,
             },
         });
     } catch (error) {
