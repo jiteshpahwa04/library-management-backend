@@ -1,0 +1,33 @@
+version: '3.8'
+
+services:
+  backend:
+    build: .
+    container_name: my-backend
+    depends_on:
+      - db
+    environment:
+      DATABASE_URL: "postgresql://postgres:toughpassword@db:5432/librarydb"
+      PORT: 5000
+      # NODE_ENV: production
+    ports:
+      - "5000:5000"
+    volumes:
+      - .:/app
+
+  db:
+    image: postgres:latest
+    container_name: my-postgres
+    restart: always
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: toughpassword
+      POSTGRES_DB: librarydb
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+volumes:
+  postgres_data:
+    driver: local
