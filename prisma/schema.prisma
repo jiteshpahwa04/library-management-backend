@@ -89,22 +89,13 @@ model Item {
   thumbnail        String?
   collectionId     String
   collection       Collection @relation(fields: [collectionId], references: [id], onDelete: Cascade)
-  files            File[]
+  files            String[]
   carts            Cart[]
 
   createdBy   User     @relation(fields: [createdById], references: [id], onDelete: Cascade)
   createdById String
   updatedAt   DateTime @updatedAt
   updatedById String?
-}
-
-model File {
-  id     String @id @default(uuid())
-  url    String
-  public_id   String
-  type   String
-  item   Item   @relation(fields: [itemId], references: [id])
-  itemId String
 }
 
 model Cart {

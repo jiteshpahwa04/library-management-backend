@@ -1,19 +1,9 @@
 const { PrismaClient } = require('@prisma/client');
-const { uploadImageToCloudinary } = require('../utils/imageUploader');
 
 const prisma = new PrismaClient();
 
-async function createCollection(data, logo) {
+async function createCollection(data, logoUrl) {
     try {
-        let logoUrl = null;
-        if (logo != null) {
-            const cloudinaryResponse = await uploadImageToCloudinary(
-                logo,
-                process.env.FOLDER_NAME
-            )
-            logoUrl = cloudinaryResponse.secure_url;
-        }
-
         const community = await prisma.community.findUnique({
             where: {
                 id: data.communityId

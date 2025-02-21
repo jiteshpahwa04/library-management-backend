@@ -1,20 +1,9 @@
 const { PrismaClient } = require('@prisma/client');
-const { uploadImageToCloudinary } = require('../utils/imageUploader');
 
 const prisma = new PrismaClient();
 
-async function createItem(data, files) {
+async function createItem(data, fileUrls) {
   try {
-    let fileDetails = [];
-    for(let file of files){
-        const cloudinaryResponse = await uploadImageToCloudinary(
-            file,
-            process.env.FOLDER_NAME
-        )
-
-        fileDetails.push(cloudinaryResponse);
-    }
-
     const collection = await prisma.collection.findUnique({
         where: {
             id: data.collectionId
@@ -40,23 +29,12 @@ async function createItem(data, files) {
         abstract: data.abstract || null,
         sponsors: data.sponsors || null,
         description: data.description || null,
+        files: fileUrls,
         licenseConfirmed: data.licenseConfirmed === 'true',
         collectionId: data.collectionId,
         createdById: data.creatorId
       }
     });
-    
-    // create files
-    for(const fileDetail of fileDetails){
-        await prisma.file.create({
-            data: {
-                url: fileDetail.secure_url,
-                type: fileDetail.resource_type,
-                itemId: item.id,
-                public_id: fileDetail.public_id
-            }
-        });
-    }
 
     return item;
   } catch (error) {

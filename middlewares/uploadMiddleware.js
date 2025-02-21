@@ -1,19 +1,24 @@
-// uploadMiddleware.js
 const multer = require('multer');
+const path = require('path');
+const fs = require('fs');
 
-// Configure storage for Multer (In memory storage or disk storage)
-const storage = multer.memoryStorage(); // Or you can use diskStorage if you prefer
+// Ensure "uploads" directory exists
+const uploadDir = path.join(__dirname, '../uploads');
+if (!fs.existsSync(uploadDir)) {
+  fs.mkdirSync(uploadDir, { recursive: true });
+}
 
-// File filter to only accept image files
-const fileFilter = (req, file, cb) => {
-  if (file.mimetype.startsWith('image/')) {
-    cb(null, true);
-  } else {
-    cb(new Error('Only image files are allowed!'), false);
+// Configure Multer storage
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, uploadDir);
+  },
+  filename: (req, file, cb) => {
+    cb(null, `${Date.now()}-${file.originalname}`);
   }
-};
+});
 
-// Create multer upload instance with storage and file filter
-const upload = multer({ storage, fileFilter });
+// Multer configuration (no file limits)
+const upload = multer({ storage });
 
 module.exports = upload;

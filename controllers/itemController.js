@@ -21,8 +21,6 @@ async function createItemHandler(req, res) {
       collectionId
     } = req.body;
 
-    const { files } = req.files;
-
     const creatorId = req.user.userId;
 
     // Validate required fields
@@ -31,6 +29,14 @@ async function createItemHandler(req, res) {
     }
     if (!licenseConfirmed) {
       return res.status(400).json({ error: 'License is required' });
+    }
+
+    let fileUrls = null;
+    if(req.files!=null){
+      const files = req.files;
+      fileUrls = files.map((file)=>{
+        return file.filename;
+      });
     }
 
     const item = await createItem(
@@ -53,7 +59,7 @@ async function createItemHandler(req, res) {
         collectionId,
         creatorId
       },
-      files
+      fileUrls
     );
 
     return res.status(201).json({ message: 'Item created successfully', item });

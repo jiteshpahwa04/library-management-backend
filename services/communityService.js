@@ -1,14 +1,9 @@
 const { PrismaClient } = require('@prisma/client');
-const { uploadImageToCloudinary } = require('../utils/imageUploader');
 
 const prisma = new PrismaClient();
 
-async function createCommunity(userId, name, shortDescription, introductoryText, copyrightText, news, parentCommunity, logo) {
+async function createCommunity(userId, name, shortDescription, introductoryText, copyrightText, news, parentCommunity, logoUrl) {
     try {
-        if (!logo.mimetype.startsWith('image/')) {
-            return new Error('Only image file is allowed!');
-        }
-
         if(parentCommunity!=undefined && parentCommunity!=null){
             const community = await prisma.community.findUnique({
                 where: {
@@ -20,12 +15,13 @@ async function createCommunity(userId, name, shortDescription, introductoryText,
             }
         }
 
-        let cloudinaryResponse = null;
-        if(logo!=null){
-            cloudinaryResponse = await uploadImageToCloudinary(
-                logo,
-                process.env.FOLDER_NAME
-            )
+        const alreadyPresentCommunity = await prisma.community.findUnique({
+            where: {
+                name: name
+            }
+        })
+        if(alreadyPresentCommunity!=null){
+            throw new Error("A community already present with same name");
         }
 
         return prisma.community.create({
@@ -37,11 +33,11 @@ async function createCommunity(userId, name, shortDescription, introductoryText,
                 news,
                 parentCommunity,
                 createdById: userId,
-                logoUrl: cloudinaryResponse!=null ? cloudinaryResponse.secure_url : null,
+                logoUrl
             },
         });
     } catch (error) {
-        throw new Error('Error uploading logo to Cloudinary: ' + error.message);
+        throw new Error('Error creating the community: ' + error.message);
     }
 }
 
