@@ -2,12 +2,12 @@ const { PrismaClient } = require('@prisma/client');
 
 const prisma = new PrismaClient();
 
-async function createCommunity(userId, name, shortDescription, introductoryText, copyrightText, news, parentCommunity, logoUrl) {
+async function createCommunity(data, logoUrl) {
     try {
-        if(parentCommunity!=undefined && parentCommunity!=null){
+        if(data.parentCommunity!=undefined && data.parentCommunity!=null){
             const community = await prisma.community.findUnique({
                 where: {
-                    id: parentCommunity
+                    id: data.parentCommunity
                 }
             });
             if(community==null){
@@ -17,22 +17,22 @@ async function createCommunity(userId, name, shortDescription, introductoryText,
 
         const alreadyPresentCommunity = await prisma.community.findUnique({
             where: {
-                name: name
+                name: data.name
             }
         })
         if(alreadyPresentCommunity!=null){
             throw new Error("A community already present with same name");
         }
 
-        return prisma.community.create({
+        return await prisma.community.create({
             data: {
-                name,
-                shortDescription,
-                introductoryText,
-                copyrightText,
-                news,
-                parentCommunity,
-                createdById: userId,
+                name: data.name,
+                shortDescription: data.shortDescription,
+                introductoryText: data.introductoryText,
+                copyrightText: data.copyrightText,
+                news: data.news,
+                parentCommunity: data.parentCommunity,
+                createdById: data.userId,
                 logoUrl
             },
         });

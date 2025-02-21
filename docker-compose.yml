@@ -1,4 +1,4 @@
-version: '3.8'
+version: "3.8"
 
 services:
   backend:
@@ -6,8 +6,10 @@ services:
     container_name: my-backend
     depends_on:
       - db
+      - elasticsearch
     environment:
       DATABASE_URL: "postgresql://postgres:toughpassword@db:5432/librarydb"
+      ELASTICSEARCH_URL: "http://elasticsearch:9200"
       PORT: 5000
       # NODE_ENV: production
     ports:
@@ -28,6 +30,27 @@ services:
     volumes:
       - postgres_data:/var/lib/postgresql/data
 
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:8.5.1
+    container_name: my-elasticsearch
+    environment:
+      - discovery.type=single-node
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+      - xpack.security.enabled=false
+      - logger.level=error
+    ports:
+      - "9200:9200"
+    volumes:
+      - elasticsearch_data:/usr/share/elasticsearch/data
+    networks:
+      - elastic
+
 volumes:
   postgres_data:
     driver: local
+  elasticsearch_data:
+    driver: local
+
+networks:
+  elastic:
+    driver: bridge

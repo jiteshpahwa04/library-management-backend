@@ -1,4 +1,5 @@
 const { PrismaClient } = require('@prisma/client');
+const client = require('../config/elasticsearch');
 
 const prisma = new PrismaClient();
 
@@ -16,14 +17,14 @@ async function createItem(data, fileUrls) {
     const item = await prisma.item.create({
       data: {
         title: data.title,
-        authors: data.authors ? data.types.split(',') : [],
-        otherTitles: data.otherTitles ? data.types.split(',') : [],
+        authors: data.authors,
+        otherTitles: data.otherTitles,
         dateOfIssue: new Date(data.dateOfIssue),
         publisher: data.publisher || null,
         citation: data.citation || null,
-        seriesReports: data.seriesReports ? JSON.parse(data.seriesReports) : null,
-        identifiers: data.identifiers ? JSON.parse(data.identifiers) : null,
-        types: data.types.split(','),
+        seriesReports: data.seriesReports,
+        identifiers: data.identifiers,
+        types: data.types,
         language: data.language || null,
         subjectKeywords: data.subjectKeywords || null,
         abstract: data.abstract || null,
@@ -34,6 +35,12 @@ async function createItem(data, fileUrls) {
         collectionId: data.collectionId,
         createdById: data.creatorId
       }
+    });
+
+    await client.index({
+      index: 'items',
+      id: item.id,
+      body: {data},
     });
 
     return item;

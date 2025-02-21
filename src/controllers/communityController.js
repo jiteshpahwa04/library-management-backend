@@ -3,9 +3,9 @@ const path = require("path");
 
 async function createCommunity(req, res) {
   try {
-    const { name, introductoryText, shortDescription, copyrightText, news, parentCommunity } = req.body;
+    const data = JSON.parse(req.body.community);
 
-    if (!name) {
+    if (!data.name) {
       return res.status(400).json({ message: 'Name is required' });
     }
 
@@ -15,7 +15,8 @@ async function createCommunity(req, res) {
     }
 
     const logoUrl = req.file!=null ? "/uploads" + "/" + req.file.filename : null;
-    const community = await communityService.createCommunity(req.user.userId, name, shortDescription, introductoryText, copyrightText, news, parentCommunity, logoUrl);
+    data.userId = req.user.userId;
+    const community = await communityService.createCommunity(data, logoUrl);
     res.status(201).json({ message: 'Community created successfully', community });
   } catch (error) {
     res.status(400).json({ message: error.message });

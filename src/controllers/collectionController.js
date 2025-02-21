@@ -2,16 +2,16 @@ const { createCollection } = require('../services/collectionService');
 
 async function createCollectionHandler(req, res) {
   try {
-    const { name, introductoryText, shortDescription, copyrightText, news, license, communityId } = req.body;
+    const data = JSON.parse(req.body.collection);
     
-    if (!name || !communityId) {
+    if (!data.name || !data.communityId) {
       return res.status(400).json({ error: 'Name and community are required' });
     }
 
-    const creatorId = req.user.userId;
+    data.creatorId = req.user.userId;
     const logoUrl = req.file!=null ? "/uploads" + "/" + req.file.filename : null;
     const collection = await createCollection(
-      { name, introductoryText, shortDescription, copyrightText, news, license, communityId, creatorId },
+      data,
       logoUrl
     );
 
