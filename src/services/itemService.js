@@ -35,11 +35,13 @@ async function createItem(data, fileUrls) {
       }
     });
 
-    // await client.index({
-    //   index: 'items',
-    //   id: item.id,
-    //   body: {data},
-    // });
+    await client.index({
+      index: 'items',
+      id: item.id,
+      body: data,
+    });
+
+    await client.indices.refresh({index: 'items'})
 
     return item;
   } catch (error) {

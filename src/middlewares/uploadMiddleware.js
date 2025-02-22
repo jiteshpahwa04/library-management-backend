@@ -18,7 +18,16 @@ const storage = multer.diskStorage({
   }
 });
 
+const fileFilter = (req, file, cb) => {
+  // Check if the uploaded file is a PDF
+  if (file.mimetype === 'application/pdf') {
+    cb(null, true);
+  } else {
+    cb(new Error('Invalid file type. Only PDFs are allowed.'), false);
+  }
+};
+
 // Multer configuration (no file limits)
-const upload = multer({ storage });
+const upload = multer({ storage, fileFilter });
 
 module.exports = upload;

@@ -44,6 +44,7 @@ model Community {
   logoUrl          String?
   parentCommunity  String?
   collections      Collection[]
+  
   createdAt        DateTime     @default(now())
   updatedAt        DateTime     @updatedAt
   createdBy        User         @relation(fields: [createdById], references: [id], onDelete: Cascade)
@@ -63,6 +64,7 @@ model Collection {
   communityId      String
   community        Community @relation(fields: [communityId], references: [id], onDelete: Cascade)
   items            Item[]
+
   createdAt        DateTime  @default(now())
   createdBy        User      @relation(fields: [createdById], references: [id], onDelete: Cascade)
   createdById      String
@@ -93,6 +95,7 @@ model Item {
   files            String[]
   carts            Cart[]
 
+  createdAt   DateTime @default(now())
   createdBy   User     @relation(fields: [createdById], references: [id], onDelete: Cascade)
   createdById String
   updatedAt   DateTime @updatedAt
