@@ -3,6 +3,13 @@ const app = express();
 const cors = require("cors");
 const path = require("path");
 
+// routes
+const authRoutes = require('./routes/auth');
+const communityRoutes = require('./routes/communityRoutes');
+const collectionRoutes = require('./routes/collectionRoutes');
+const itemRoutes = require('./routes/itemRoutes');
+const cartRoutes = require('./routes/cartRoutes');
+
 const PORT = process.env.PORT || 5000;
 require('dotenv').config()
 
@@ -16,15 +23,10 @@ app.use(cors({
 // Serve uploaded files statically
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
-// routes
-const authRoutes = require('./routes/auth');
-const communityRoutes = require('./routes/communityRoutes');
-const collectionRoutes = require('./routes/collectionRoutes');
-const itemRoutes = require('./routes/itemRoutes');
-
 app.use('/api/auth', authRoutes);
 app.use('/api/community', communityRoutes);
 app.use('/api/collection', collectionRoutes);
 app.use('/api/item', itemRoutes);
+app.use("/api/cart", cartRoutes);
 
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));

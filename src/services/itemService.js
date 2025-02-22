@@ -1,7 +1,5 @@
-const { PrismaClient } = require('@prisma/client');
+const prisma = require("../config/prismaClient");
 const client = require('../config/elasticsearch');
-
-const prisma = new PrismaClient();
 
 async function createItem(data, fileUrls) {
   try {
@@ -37,11 +35,11 @@ async function createItem(data, fileUrls) {
       }
     });
 
-    await client.index({
-      index: 'items',
-      id: item.id,
-      body: {data},
-    });
+    // await client.index({
+    //   index: 'items',
+    //   id: item.id,
+    //   body: {data},
+    // });
 
     return item;
   } catch (error) {

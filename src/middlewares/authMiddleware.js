@@ -27,17 +27,17 @@ const isAdmin = (req, res, next) => {
   next();
 };
 
-// Middleware to check LIBRARIAN role
+// Middleware to check LIBRARIAN or above role
 const isLibrarian = (req, res, next) => {
-  if (req.user.role !== 'LIBRARIAN') {
+  if (!(req.user.role == 'LIBRARIAN' || req.user.role == 'ADMIN')) {
     return res.status(403).json({ message: 'Access Denied: Librarians only' });
   }
   next();
 };
 
-// Middleware to check USER role
+// Middleware to check any role
 const isUser = (req, res, next) => {
-  if (req.user.role !== 'USER') {
+  if (req.user.role == null) {
     return res.status(403).json({ message: 'Access Denied: Users only' });
   }
   next();
