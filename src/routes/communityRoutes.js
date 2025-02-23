@@ -1,7 +1,7 @@
 const express = require('express');
 const { createCommunity } = require('../controllers/communityController');
 const { verifyToken, isAdmin } = require('../middlewares/authMiddleware');
-const upload = require('../middlewares/uploadMiddleware');
+const upload = require('../middlewares/logoUploadMiddleware');
 
 const router = express.Router();
 
