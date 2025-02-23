@@ -9,6 +9,7 @@ const communityRoutes = require('./routes/communityRoutes');
 const collectionRoutes = require('./routes/collectionRoutes');
 const itemRoutes = require('./routes/itemRoutes');
 const cartRoutes = require('./routes/cartRoutes');
+const searchRoutes = require('./routes/searchRoutes');
 
 const PORT = process.env.PORT || 5000;
 require('dotenv').config()
@@ -28,5 +29,6 @@ app.use('/api/community', communityRoutes);
 app.use('/api/collection', collectionRoutes);
 app.use('/api/item', itemRoutes);
 app.use("/api/cart", cartRoutes);
+app.use('/api/search', searchRoutes);
 
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
